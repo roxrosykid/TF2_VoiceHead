@@ -20,7 +20,7 @@ public Plugin myinfo =
     name = "[TF2] VoiceHead",
     author = "roxrosykid",
     description = "Change players head dynamically, as they speak.",
-    version = "1.0.4",
+    version = "1.0.5",
     url = "https://github.com/roxrosykid"
 };
 
@@ -28,23 +28,29 @@ public void OnPluginStart()
 {
     HookEvent("player_spawn", Event_PlayerSpawn);
     
+    // Register client cookie for head enlargement toggle
     g_hCookie_HeadEnlargement = RegClientCookie("head_enlargement_enabled", "Toggle head enlargement", CookieAccess_Public);
     
+    // Add cookie menu item to sm_settings
     SetCookieMenuItem(CookieMenu_HeadEnlargement, 0, "Head Enlargement");
     
-    g_hCvar_SineWaveFrequency = CreateConVar("sm_headscale_frequency", "", "Frequency of the sine wave", FCVAR_NONE, true, 0.0);
+    // Register ConVars
+    g_hCvar_SineWaveFrequency = CreateConVar("sm_headscale_frequency", "12.5", "Frequency of the sine wave", FCVAR_NONE, true, 0.0);
     g_hCvar_SineWaveAmplitude = CreateConVar("sm_headscale_amplitude", "0.4", "Amplitude of the sine wave", FCVAR_NONE, true, 0.0);
     g_hCvar_BaseScale = CreateConVar("sm_headscale_base_scale", "1.5", "Base scale when the player starts speaking", FCVAR_NONE, true, 0.0);
     
+    // Hook ConVar changes
     HookConVarChange(g_hCvar_SineWaveFrequency, OnCvarChanged);
     HookConVarChange(g_hCvar_SineWaveAmplitude, OnCvarChanged);
     HookConVarChange(g_hCvar_BaseScale, OnCvarChanged);
     
+    // Auto-execute the config file
     AutoExecConfig(true, "head_scale_wobble");
 }
 
 public void OnConfigsExecuted()
 {
+    // Retrieve initial values from ConVars
     g_fSineWaveFrequency = GetConVarFloat(g_hCvar_SineWaveFrequency);
     g_fSineWaveAmplitude = GetConVarFloat(g_hCvar_SineWaveAmplitude);
     g_fBaseScale = GetConVarFloat(g_hCvar_BaseScale);
@@ -84,7 +90,7 @@ public void OnClientSpeakingEnd(int client)
     {
         KillTimer(g_hHeadScaleTimers[client]);
         g_hHeadScaleTimers[client] = INVALID_HANDLE;
-        SetEntPropFloat(client, Prop_Send, "m_flHeadScale", 1.0);
+        SetEntPropFloat(client, Prop_Send, "m_flHeadScale", 1.0); // Reset head scale to normal
     }
 }
 
@@ -111,7 +117,7 @@ public void Event_PlayerSpawn(Event event, const char[] name, bool dontBroadcast
     {
         KillTimer(g_hHeadScaleTimers[client]);
         g_hHeadScaleTimers[client] = INVALID_HANDLE;
-        SetEntPropFloat(client, Prop_Send, "m_flHeadScale", 1.0);
+        SetEntPropFloat(client, Prop_Send, "m_flHeadScale", 1.0); // Reset head scale to normal
     }
 }
 
@@ -146,7 +152,7 @@ public void CookieMenu_HeadEnlargement(int client, CookieMenuAction action, any 
 public void SendHeadEnlargementMenu(int client)
 {
     Menu menu = new Menu(HeadEnlargementMenuHandler);
-    menu.SetTitle("VoiceHead Settings");
+    menu.SetTitle("Head Enlargement Settings");
     
     char sOption[64];
     if (g_bHeadEnlargementEnabled[client])
@@ -174,7 +180,7 @@ public int HeadEnlargementMenuHandler(Menu menu, MenuAction action, int param1, 
         {
             g_bHeadEnlargementEnabled[param1] = !g_bHeadEnlargementEnabled[param1];
             SetClientCookie(param1, g_hCookie_HeadEnlargement, g_bHeadEnlargementEnabled[param1] ? "1" : "0");
-            PrintToChat(param1, "[SM] Voice head reaction is now %s", g_bHeadEnlargementEnabled[param1] ? "Enabled" : "Disabled");
+            PrintToChat(param1, "[SM] Head Enlargement is now %s", g_bHeadEnlargementEnabled[param1] ? "Enabled" : "Disabled");
         }
         
         SendHeadEnlargementMenu(param1);
