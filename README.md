@@ -9,7 +9,7 @@
 - **Player Control**: Players can toggle the head enlargement effect on or off via the cookie menu.
 
 ## Installation
-1. **Download the Plugin**: Grab the [latest release](https://github.com/roxrosykid/VoiceHead).
+1. **Download the Plugin**: Grab the [latest release](https://github.com/roxrosykid/TF2_VoiceHead/releases/latest). 
 2. **Install the Plugin**: Place the `.smx` file in your `tf/addons/sourcemod/plugins/` directory.
 3. **Configure the Plugin**: Adjust the convars in the `cfg/sourcemod/head_scale_wobble.cfg` file to customize the effect.
 
